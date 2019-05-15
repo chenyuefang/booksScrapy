@@ -1,5 +1,5 @@
 from scrapy.spiders import Spider  # 爬虫模式
-from scrapy import Request  # 请求模式
+from scrapy import Request  # 请求模块
 import re
 from booksScrapy.items import BooksScrapyItem  # 导入Item类
 
@@ -27,3 +27,10 @@ class booksSpider(Spider):
         if next_url:
             next_url = "http://books.toscrape.com/catalogue/page-" + re.sub("\D", "", next_url[0]) + ".html"
             yield Request(next_url, callback=self.parse)
+
+    #  提取并解析详细页的数据
+    def parse_content(self,response):
+        content = response.xpath("//article/p/text()").extract()[0]
+        item = response.metra["myitem"]
+        item["content"]=content
+        yield item
